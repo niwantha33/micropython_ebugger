@@ -82,7 +82,7 @@ def _pump():
                         text = "no code on %s.%s line %d" % (mn, fn, line)
                     else:
                         slot = dbg.set_bp(func, ip)
-                        text = "bp %d @ %s.%s:%d ip=%d" % (slot, mn, fn, line, ip)
+                        text = "bp %d @ %s.%s:%d ip=%d fun=%d" % (slot, mn, fn, line, ip, id(func))
                 except Exception as e:
                     text = "err: " + repr(e)
                 payload = text.encode()[:250]
