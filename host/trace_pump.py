@@ -65,6 +65,59 @@ def _pump():
             elif cmd_type == 0x14:
                 dbg.step_out()
                 continues += 1
+            elif cmd_type == 0x15:
+                # set_bp_line: payload = mn_len(1), mn, fn_len(1), fn, line_lo, line_hi
+                try:
+                    p = cmd_buf[3:total]
+                    i = 0
+                    mn_len = p[i]; i += 1
+                    mn = bytes(p[i:i+mn_len]).decode(); i += mn_len
+                    fn_len = p[i]; i += 1
+                    fn = bytes(p[i:i+fn_len]).decode(); i += fn_len
+                    line = p[i] | (p[i+1] << 8)
+                    mod = __import__(mn)
+                    func = getattr(mod, fn)
+                    ip = dbg.line_to_ip(func, line)
+                    if ip < 0:
+                        text = "no code on %s.%s line %d" % (mn, fn, line)
+                    else:
+                        slot = dbg.set_bp(func, ip)
+                        text = "bp %d @ %s.%s:%d ip=%d" % (slot, mn, fn, line, ip)
+                except Exception as e:
+                    text = "err: " + repr(e)
+                payload = text.encode()[:250]
+                frame = bytes([0xAA, 0x03, len(payload)]) + payload
+                try:
+                    cdc.write(frame)
+                except Exception:
+                    pass
+            elif cmd_type == 0x16:
+                # clear_bp: payload = slot (1 byte)
+                try:
+                    slot = cmd_buf[3]
+                    dbg.clear_bp(slot)
+                    text = "cleared bp %d" % slot
+                except Exception as e:
+                    text = "err: " + repr(e)
+                payload = text.encode()[:250]
+                frame = bytes([0xAA, 0x03, len(payload)]) + payload
+                try:
+                    cdc.write(frame)
+                except Exception:
+                    pass
+            elif cmd_type == 0x17:
+                # call_stack: return list of (fun_bc_ptr, ip_off)
+                try:
+                    stack = dbg.call_stack()
+                    text = "stack=" + repr(stack)
+                except Exception as e:
+                    text = "err: " + repr(e)
+                payload = text.encode()[:250]
+                frame = bytes([0xAA, 0x03, len(payload)]) + payload
+                try:
+                    cdc.write(frame)
+                except Exception:
+                    pass
             elif cmd_type == 0x12:
                 try:
                     vals = dbg.locals()
