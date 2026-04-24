@@ -25,9 +25,10 @@ def _pump():
     import dbgref
     cdc = dbgref.cdc
     cmd_buf = bytearray()
+    dbg.set_pump_fun(_pump)
 
-    dbg.mute()
     while _running:
+        dbg.mute()
         while True:
             data = dbg.read_trace(256)
             if not data:
@@ -84,8 +85,8 @@ def _pump():
         while cmd_buf and cmd_buf[0] != 0xAA:
             cmd_buf.pop(0)
 
+        dbg.unmute()
         time.sleep_ms(5)
-    dbg.unmute()
 
 
 def start():
