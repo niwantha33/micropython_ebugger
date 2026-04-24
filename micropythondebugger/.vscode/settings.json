@@ -1,0 +1,28 @@
+{
+  "files.associations": {
+    "*.mpy": "python",
+    "*.my": "python"
+  },
+  "micropython-ide.deviceCodePath": "device_code",
+  "micropython-ide.targetMCU": "Raspberry Pi Pico 2 W",
+  "python.languageServer": "Pylance",
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.extraPaths": [
+    "C:\\Users\\niwan\\.micropython-studio\\stubs\\micropython-rp2-stubs",
+    "C:\\Users\\niwan\\.micropython-studio\\.venv\\Lib\\site-packages"
+  ],
+  "python.autoComplete.extraPaths": [
+    "C:\\Users\\niwan\\.micropython-studio\\stubs\\micropython-rp2-stubs",
+    "C:\\Users\\niwan\\.micropython-studio\\.venv\\Lib\\site-packages"
+  ],
+  "python.defaultInterpreterPath": "C:\\Users\\niwan\\.micropython-studio\\.venv\\Scripts\\python.exe",
+  "python.analysis.useLibraryCodeForTypes": true,
+  "python.analysis.diagnosticSeverityOverrides": {
+    "reportMissingModuleSource": "none",
+    "reportMissingModuleStubs": "none"
+  },
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/.mypy_cache": true
+  }
+}
