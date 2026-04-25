@@ -1,0 +1,61 @@
+name: Build firmware and publish to firmware repo
+
+on:
+  push:
+    paths:
+      - 'firmware/patches/**'
+      - '.github/workflows/build-firmware.yml'
+  workflow_dispatch:  # allows manual run from Actions tab
+
+jobs:
+  build-pico2w:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source repo
+        uses: actions/checkout@v4
+
+      - name: Install ARM toolchain + build deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-arm-none-eabi cmake build-essential python3 git
+
+      - name: Clone MicroPython
+        run: |
+          git clone --recursive https://github.com/micropython/micropython.git $HOME/micropython
+          cd $HOME/micropython && make -C mpy-cross
+
+      - name: Apply patches
+        env:
+          MPY_DIR: ${{ env.HOME }}/micropython
+        run: |
+          export MPY_DIR=$HOME/micropython
+          for p in firmware/patches/0*.sh; do
+            echo ">> $p"
+            bash "$p"
+          done
+
+      - name: Build firmware (RPI_PICO2_W)
+        run: |
+          cd $HOME/micropython/ports/rp2
+          make BOARD=RPI_PICO2_W submodules
+          make BOARD=RPI_PICO2_W -j4
+
+      - name: Push UF2 to firmware repo
+        env:
+          TOKEN: ${{ secrets.FIRMWARE_REPO_TOKEN }}
+        run: |
+          UF2=$HOME/micropython/ports/rp2/build-RPI_PICO2_W/firmware.uf2
+          test -f "$UF2"
+          git config --global user.email "bot@niwantha33.local"
+          git config --global user.name "firmware-bot"
+          git clone https://x-access-token:${TOKEN}@github.com/niwantha33/micropython_firmware.git out
+          mkdir -p out/Pico2w
+          cp "$UF2" out/Pico2w/firmware.uf2
+          {
+            echo "source_commit: ${GITHUB_SHA}"
+            echo "built_at: $(date -u +%FT%TZ)"
+          } > out/Pico2w/VERSION.txt
+          cd out
+          git add Pico2w/
+          git commit -m "auto: Pico2w firmware from ${GITHUB_SHA::7}" || echo "no changes"
+          git push

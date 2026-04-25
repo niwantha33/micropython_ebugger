@@ -73,7 +73,7 @@ either pauses or silently resumes.
 Requires WSL (or Linux/macOS) with the Pico SDK toolchain installed.
 
 ```bash
-git clone --recursive https://github.com/yourusername/micropython-debugger
+git clone --recursive https://github.com/niwantha33/micropython_live_debugger
 cd micropython-debugger
 export MPY_DIR=$HOME/micropython
 git clone --recursive https://github.com/micropython/micropython.git $MPY_DIR
@@ -122,7 +122,14 @@ Frames are `[0xAA][type][len][payload]`.
 
 ## Status
 
-**v1.0.0 — first public release.** Stable end-to-end on Raspberry Pi Pico 2 W.
+**v1.0.1 — bugfix release.** Stable end-to-end on Raspberry Pi Pico 2 W.
+
+### v1.0.1 changes
+- Upload corruption fixed (raw-paste flow control)
+- Download corruption fixed (HEXLEN/HEXSTART markers + chunked print)
+- Single-file and folder uploads now share the reliable one-shot path
+- mip PC-side fallback works again on devices without WiFi
+- Shell terminal no longer leaks venv-activate text into the REPL
 
 Verified working with:
 - Synchronous code (loops, function calls, recursion)
@@ -149,7 +156,13 @@ See [ROADMAP.md](ROADMAP.md). Next:
 
 ## License
 
-MIT.
+MIT — see [LICENSE](LICENSE).
+
+If you make changes or derivative work, please let me know:
+- Email: niwantha33@gmail.com
+- Repo: https://github.com/niwantha33/micropython_live_debugger
+
+So improvements can be folded back upstream.
 
 ## Credits
 
