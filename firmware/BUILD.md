@@ -3,7 +3,7 @@
 ## Where things live
 
 ```
-C:\Claude_Projects\micropython_debugger\firmware\    ← this folder (Windows)
+C:\project\micropython_debugger\firmware\    ← this folder (Windows)
 ├── BUILD.md              this file
 ├── patches\              our edits to MicroPython, as numbered .patch files
 │   ├── 0001-*.patch
@@ -41,7 +41,7 @@ Both handled by `build.sh`.
 From a WSL terminal:
 
 ```bash
-cd /mnt/c/Claude_Projects/micropython_debugger/firmware
+cd /mnt/c/projec/micropython_debugger/firmware
 ./build.sh
 ```
 
@@ -58,7 +58,7 @@ To flash:
 2. Generate the patch:
    ```bash
    cd ~/micropython
-   git diff > /mnt/c/Claude_Projects/micropython_debugger/firmware/patches/NNNN-short-description.patch
+   git diff > /mnt/c/project/micropython_debugger/firmware/patches/NNNN-short-description.patch
    ```
 3. Reset the tree so nothing is left dirty:
    ```bash
